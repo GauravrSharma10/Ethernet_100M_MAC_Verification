@@ -1,0 +1,142 @@
+# //  Questa Sim-64
+# //  Version 10.7d linux_x86_64 Feb 15 2019
+# //
+# //  Copyright 1991-2019 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+run.do
+# invalid command name "run.do"
+do run.do
+# QuestaSim-64 vlog 10.7d Compiler 2019.02 Feb 15 2019
+# Start time: 17:41:00 on Dec 12,2025
+# vlog -reportprogress 300 -sv "+incdir+../ENV" "+incdir+../TEST" ../TEST/ethernet_mac_test_pkg.sv 
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(23): Cannot find `include file "mac_interface.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(24): Cannot find `include file "wishbone_master_interface.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(25): Cannot find `include file "wishbone_slave_interface.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(26): Cannot find `include file "phy_tx_interface.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(27): Cannot find `include file "phy_rx_interface.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(28): Cannot find `include file "miim_interface.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# -- Compiling package ethernet_mac_test_pkg
+# -- Importing package mtiUvm.uvm_pkg (uvm-1.1d Built-in)
+# ** Note: (vlog-2286) ../TEST/ethernet_mac_test_pkg.sv(32): Using implicit +incdir+/global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src from import uvm_pkg
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(55): Cannot find `include file "wishbone_master_driver.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(56): Cannot find `include file "wishbone_master_monitor.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(57): Cannot find `include file "wishbone_master_sequencer.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(58): Cannot find `include file "wishbone_master_agent.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(61): Cannot find `include file "wishbone_slave_driver.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(62): Cannot find `include file "wishbone_slave_monitor.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(63): Cannot find `include file "wishbone_slave_sequencer.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(64): Cannot find `include file "wishbone_slave_agent.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(67): Cannot find `include file "tx_phy_driver.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(68): Cannot find `include file "tx_phy_monitor.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(69): Cannot find `include file "tx_phy_sequencer.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(70): Cannot find `include file "tx_phy_agent.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(73): Cannot find `include file "rx_phy_driver.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(74): Cannot find `include file "rx_phy_monitor.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(75): Cannot find `include file "rx_phy_sequencer.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(76): Cannot find `include file "rx_phy_agent.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(79): Cannot find `include file "miim_driver.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(80): Cannot find `include file "miim_monitor.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(81): Cannot find `include file "miim_sequencer.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ../TEST/ethernet_mac_test_pkg.sv(82): Cannot find `include file "miim_agent.sv" in directories:
+#     ../ENV, ../TEST, /global/apps/mentor_graphics/questa_10.7d/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src, /global/apps/mentor_graphics/questa_10.7d/questasim/uvm-1.1d/../verilog_src/uvm-1.1d/src
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(88)
+# ** at ../ENV/ethernet_mac_virtual_sequencer.sv(25): Invalid type 'wishbone_master_sequencer'. Please check the type of the variable 'wb_mst_seqr_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(88)
+# ** at ../ENV/ethernet_mac_virtual_sequencer.sv(26): Invalid type 'wishbone_slave_sequencer'. Please check the type of the variable 'wb_slv_seqr_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(88)
+# ** at ../ENV/ethernet_mac_virtual_sequencer.sv(27): Invalid type 'tx_phy_sequencer'. Please check the type of the variable 'tx_phy_seqr_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(88)
+# ** at ../ENV/ethernet_mac_virtual_sequencer.sv(28): Invalid type 'rx_phy_sequencer'. Please check the type of the variable 'rx_phy_seqr_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(88)
+# ** at ../ENV/ethernet_mac_virtual_sequencer.sv(29): Invalid type 'miim_sequencer'. Please check the type of the variable 'miim_seqr_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(25): Invalid type 'wishbone_master_agent'. Please check the type of the variable 'wb_mst_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(26): Invalid type 'wishbone_slave_agent'. Please check the type of the variable 'wb_slv_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(27): Invalid type 'tx_phy_agent'. Please check the type of the variable 'tx_phy_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(28): Invalid type 'rx_phy_agent'. Please check the type of the variable 'rx_phy_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(29): Invalid type 'miim_agent'. Please check the type of the variable 'miim_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(55): (vlog-2730) Undefined variable: 'wb_mst_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(55): (vlog-2164) Class or package 'wishbone_master_agent' not found.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(55): (vlog-2730) Undefined variable: 'wishbone_master_agent'.
+# ** Error: (vlog-13069) ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(55): near "::": syntax error, unexpected ::, expecting ';'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(56): (vlog-2730) Undefined variable: 'wb_slv_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(56): (vlog-2164) Class or package 'wishbone_slave_agent' not found.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(56): (vlog-2730) Undefined variable: 'wishbone_slave_agent'.
+# ** Error: (vlog-13069) ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(56): near "::": syntax error, unexpected ::, expecting ';'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(57): (vlog-2730) Undefined variable: 'tx_phy_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(57): (vlog-2164) Class or package 'tx_phy_agent' not found.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(57): (vlog-2730) Undefined variable: 'tx_phy_agent'.
+# ** Error: (vlog-13069) ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(57): near "::": syntax error, unexpected ::, expecting ';'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(58): (vlog-2730) Undefined variable: 'rx_phy_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(58): (vlog-2164) Class or package 'rx_phy_agent' not found.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(58): (vlog-2730) Undefined variable: 'rx_phy_agent'.
+# ** Error: (vlog-13069) ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(58): near "::": syntax error, unexpected ::, expecting ';'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(59): (vlog-2730) Undefined variable: 'miim_agent_h'.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(59): (vlog-2164) Class or package 'miim_agent' not found.
+# ** Error: ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(59): (vlog-2730) Undefined variable: 'miim_agent'.
+# ** Error: (vlog-13069) ** while parsing file included at ../TEST/ethernet_mac_test_pkg.sv(89)
+# ** at ../ENV/ethernet_mac_env.sv(59): near "::": syntax error, unexpected ::, expecting ';'.
+# End time: 17:41:00 on Dec 12,2025, Elapsed time: 0:00:00
+# Errors: 56, Warnings: 0
+# ** Error: /global/apps/mentor_graphics/questa_10.7d/questasim/linux_x86_64/vlog failed.
+# Error in macro ./run.do line 5
+# /global/apps/mentor_graphics/questa_10.7d/questasim/linux_x86_64/vlog failed.
+#     while executing
+# "vlog -sv +incdir+../ENV +incdir+../TEST ../TEST/ethernet_mac_test_pkg.sv"
