@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////////////////
 // Filename: wishbone_slave_monitor.sv
 //
 // Author:
@@ -15,47 +15,88 @@
 // Dependencies:
 // Notes:
 //////////////////////////////////////////////////////////////////////////////////
-
+ 
 `ifndef WISHBONE_SLAVE_MONITOR_SV
 `define WISHBONE_SLAVE_MONITOR_SV
 
+ `define dsvif s_vif.mon_cb
 class wishbone_slave_monitor extends uvm_monitor;
   `uvm_component_utils(wishbone_slave_monitor)
-
-  virtual wishbone_slave_interface vif;
-  uvm_analysis_port #(uvm_sequence_item) ap;
-
+ 
+  virtual wishbone_slave_interface s_vif;
+  uvm_analysis_port #(wishbone_seq_item) transaction_aport;
+  uvm_analysis_port #(wishbone_seq_item) request_aport;
+  
+  wishbone_seq_item req;
+  
+   
+  
   ////////////////////////////////////////////////////////////////////////
-  // function name : new
-  // argument : string name = "wishbone_slave_monitor", uvm_component parent = null
+  // function nameor", uvm_component parent = null
   // description : Class constructor
   ////////////////////////////////////////////////////////////////////////
   function new(string name = "wishbone_slave_monitor", uvm_component parent = null);
     super.new(name, parent);
-    ap = new("ap", this);
+    request_aport = new("request_aport", this);
+    transaction_aport = new("transaction_aport", this);
   endfunction
-
+ 
   ////////////////////////////////////////////////////////////////////////
   // function name : build_phase
   // argument : uvm_phase phase
   // description : Build phase to get virtual interface
   ////////////////////////////////////////////////////////////////////////
+ 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(virtual wishbone_slave_interface)::get(this, "", "vif", vif))
-      `uvm_fatal("NOVIF", "Virtual interface not set for wishbone_slave_monitor")
+    if(!uvm_config_db#(virtual wishbone_slave_interface)::get(this, "", "s_vif", s_vif))
+      `uvm_fatal("NO vif", "Virtual interface not set for wishbone_master_driver")
   endfunction
-
   ////////////////////////////////////////////////////////////////////////
   // function name : run_phase
   // argument : uvm_phase phase
   // description : Run phase for monitoring signals
   ////////////////////////////////////////////////////////////////////////
   task run_phase(uvm_phase phase);
-    // Monitor logic
+    forever begin
+      @(`dsvif);
+      if (`dsvif.cyc && `dsvif.stb ) begin
+
+        req = wishbone_seq_item::type_id::create("req");
+        
+        req.we   = `dsvif.we;
+        req.addr = `dsvif.adr; 
+        
+        
+        if(`dsvif.we)begin    
+          req.data  = `dsvif.dat_w;
+      
+        end
+         
+        `uvm_info(get_name(),$sformatf("monitored transaction : %s",req.sprint()),UVM_NONE)
+        transaction_aport.write(req);
+        request_aport.write(req);
+        `uvm_info(get_type_name(), "After sending req to slave sequencer",UVM_HIGH)
+         fork
+           begin
+             /*do begin
+               @(`dsvif);
+             end while (!`dsvif.ack); // and because if one is false then condition is true*/
+						 @(`dsvif iff(`dsvif.ack));
+           end
+           begin
+             #100;
+             `uvm_error(get_full_name,"not recieving ack");
+           end
+         join_any
+         disable fork;
+      end
+			else
+        @(`dsvif);
+			  
+    end          
   endtask
 
 endclass
 
 `endif
-
