@@ -22,8 +22,8 @@
 class wishbone_master_monitor extends uvm_monitor;
   `uvm_component_utils(wishbone_master_monitor)
 
-  virtual wishbone_master_interface vif;
-  uvm_analysis_port #(uvm_sequence_item) ap;
+  virtual wishbone_master_interface m_vif;
+  uvm_analysis_port #(wishbone_seq_item) ap;
 
   ////////////////////////////////////////////////////////////////////////
   // function name : new
@@ -42,7 +42,7 @@ class wishbone_master_monitor extends uvm_monitor;
   ////////////////////////////////////////////////////////////////////////
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(virtual wishbone_master_interface)::get(this, "", "vif", vif))
+    if(!uvm_config_db#(virtual wishbone_master_interface)::get(this, "", "m_vif", m_vif))
       `uvm_fatal("NOVIF", "Virtual interface not set for wishbone_master_monitor")
   endfunction
 
@@ -58,4 +58,3 @@ class wishbone_master_monitor extends uvm_monitor;
 endclass
 
 `endif
-
