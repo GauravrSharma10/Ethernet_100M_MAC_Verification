@@ -11,7 +11,7 @@
 //
 // This file is part of the Ethernet_MAC_VIP project.
 //
-// Description: Rx Phy Monitor component.
+// Description: rx Phy Monitor component.
 // Dependencies:
 // Notes:
 //////////////////////////////////////////////////////////////////////////////////
@@ -24,6 +24,8 @@ class rx_phy_monitor extends uvm_monitor;
 
   virtual phy_rx_interface vif;
   uvm_analysis_port #(uvm_sequence_item) ap;
+  
+  bit enable_preamble = 1;
 
   ////////////////////////////////////////////////////////////////////////
   // function name : new
@@ -52,10 +54,8 @@ class rx_phy_monitor extends uvm_monitor;
   // description : Run phase for monitoring signals
   ////////////////////////////////////////////////////////////////////////
   task run_phase(uvm_phase phase);
-    // Monitor logic
   endtask
 
 endclass
 
 `endif
-

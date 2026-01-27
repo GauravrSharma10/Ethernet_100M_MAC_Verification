@@ -18,6 +18,7 @@
 
 `ifndef ETHERNET_MAC_ENV_SV
 `define ETHERNET_MAC_ENV_SV
+//   `include "ral_pkg.sv"
 
 class ethernet_mac_env extends uvm_env;
   `uvm_component_utils(ethernet_mac_env)
@@ -27,6 +28,8 @@ class ethernet_mac_env extends uvm_env;
   tx_phy_agent          tx_phy_agent_h;
   rx_phy_agent          rx_phy_agent_h;
   miim_agent            miim_agent_h;
+  eth_reg_block         reg_blk_h;
+  reg_wishbone_adapter  adptr_h;
 
   ethernet_mac_scoreboard        sb_h;
   ethernet_mac_cov_collector     cov_h;
@@ -66,11 +69,23 @@ class ethernet_mac_env extends uvm_env;
     // Create Virtual Sequencer
     v_seqr_h = ethernet_mac_virtual_sequencer::type_id::create("v_seqr_h", this);
 
+    //create reg block 
+    reg_blk_h = eth_reg_block::type_id::create("reg_blk_h");
+    adptr_h = reg_wishbone_adapter::type_id::create("adptr_h");
+    
+    reg_blk_h.build();
+    reg_blk_h.reset();
+    reg_blk_h.lock_model();
+    reg_blk_h.print();
+    
+    uvm_config_db#(eth_reg_block)::set(null,"*","reg_model",reg_blk_h);
+    
     // Get System Config
-    if(!uvm_config_db#(system_config)::get(this, "", "sys_cfg_h", sys_cfg_h)) begin
-       `uvm_info("NOCFG", "System config not found, creating default", UVM_LOW)
+    if(!uvm_config_db#(system_config)::get(this, "", "sys_cfg", sys_cfg_h)) begin
+       `uvm_info(get_name(), "System config not found, creating default", UVM_LOW)
        sys_cfg_h = system_config::type_id::create("sys_cfg_h");
     end
+
   endfunction
 
   ////////////////////////////////////////////////////////////////////////
@@ -89,10 +104,15 @@ class ethernet_mac_env extends uvm_env;
     v_seqr_h.miim_seqr_h   = miim_agent_h.sequencer;
 
     // Connect Analysis Ports (Example connections)
-    wb_mst_agent_h.monitor.ap.connect(sb_h.item_imp);
-    wb_mst_agent_h.monitor.ap.connect(cov_h.analysis_export);
+//     wb_mst_agent_h.monitor.ap.connect(sb_h.item_imp);
+//     wb_mst_agent_h.monitor.ap.connect(cov_h.analysis_export);
     
-    // Connect other agents similarly...
+    // Connect other agents similarly....
+    
+      reg_blk_h.wb_map.set_sequencer(.sequencer(wb_mst_agent_h.sequencer),.adapter(adptr_h));
+    
+    reg_blk_h.wb_map.set_base_addr('h0);
+    reg_blk_h.wb_map.set_auto_predict(1);
   endfunction
 
 endclass

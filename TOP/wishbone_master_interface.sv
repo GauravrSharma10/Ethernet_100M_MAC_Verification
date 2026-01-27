@@ -19,12 +19,12 @@
 `ifndef WISHBONE_MASTER_INTERFACE_SV
 `define WISHBONE_MASTER_INTERFACE_SV
 
-interface wishbone_master_interface(input logic clk, input logic rst_n);
+interface wishbone_master_interface(input logic clk, input logic rst);
   logic [31:0] adr;
   logic [31:0] dat_w;
   logic [31:0] dat_r;
   logic        we;
-  logic        sel;
+  logic [3:0]  sel;
   logic        stb;
   logic        cyc;
   logic        ack;
@@ -41,8 +41,8 @@ interface wishbone_master_interface(input logic clk, input logic rst_n);
     input adr, dat_w, dat_r, we, sel, stb, cyc, ack, err;
   endclocking
 
-  modport driver (clocking drv_cb, input clk, rst_n);
-  modport monitor (clocking mon_cb, input clk, rst_n);
+  modport driver (clocking drv_cb, input clk, rst);
+  modport monitor (clocking mon_cb, input clk, rst);
 
 endinterface
 

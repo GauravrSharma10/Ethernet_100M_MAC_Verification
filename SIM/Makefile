@@ -1,10 +1,11 @@
 
-INCL = +incdir+../ENV/ +incdir+../ENV/agents/ +incdir+../ENV/agents/miim_agent/ +incdir+../ENV/agents/rx_phy_agent/ +incdir+../ENV/agents/tx_phy_agent/ +incdir+../ENV/agents/wishbone_master_agent/ +incdir+../ENV/agents/wishbone_slave_agent/ +incdir+../RTL/ +incdir+../TEST/ +incdir+../TOP/
+INCL = +incdir+../ENV/ +incdir+../ENV/agents/ +incdir+../ENV/agents/miim_agent/ +incdir+../ENV/agents/rx_phy_agent/ +incdir+../ENV/agents/tx_phy_agent/ +incdir+../ENV/agents/wishbone_master_agent/ +incdir+../ENV/agents/wishbone_slave_agent/ +incdir+../RTL/ +incdir+../TEST/ +incdir+../TOP/ +incdir+../ENV/RAL
 
 BASE_PKG = ../TEST/ethernet_mac_test_pkg.sv
+RAL_PKG = ../TEST/ethernet_reg_pkg.sv
 
 TEST_NAME ?= ethernet_mac_base_test
-RTL = ../TOP/top.sv
+RTL = ../RTL/ethmac.v ../TOP/top.sv
 SEED ?= 0
 UVM_VERBO ?= UVM_LOW 
 COVERAGE_ENABLE ?= 0
@@ -24,12 +25,12 @@ VCS_COMP_OPTS = -lca -sverilog -l compile.log -debug_access+all -ntb_opts uvm-1.
 VCS_COVERAGE = -cm line+cond+fsm+tgl+branch
 
 #Mentor QUESTA OPTIONS
-QUESTA_RUN_OPTS = -voptargs=+acc -work work top -l $(TEST_NAME)/$(TEST_NAME)_$(SEED).log -do "do wave.do; run -all"
+QUESTA_RUN_OPTS = -voptargs=+acc -work work top -c -l $(TEST_NAME)/$(TEST_NAME)_$(SEED).log -do "do wave.do; run -all"
 QUESTA_COMP_OPTS = +acc $(INCL) $(BASE_PKG)
 QUESTA_COVERAGE = -coveropt 3 +cover
 
 #TOOL
-TOOL ?=QUESTA
+TOOL ?=VCS
 
 #Checks which TOOL is selected from CLI
 ifeq ($(TOOL) ,QUESTA)
