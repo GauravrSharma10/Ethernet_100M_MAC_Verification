@@ -65,4 +65,3 @@ class wishbone_master_agent extends uvm_agent;
 endclass
 
 `endif
-

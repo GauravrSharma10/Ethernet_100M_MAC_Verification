@@ -56,4 +56,3 @@ class tx_phy_driver extends uvm_driver #(uvm_sequence_item);
 endclass
 
 `endif
-

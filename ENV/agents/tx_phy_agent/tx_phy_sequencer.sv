@@ -34,4 +34,3 @@ class tx_phy_sequencer extends uvm_sequencer #(uvm_sequence_item);
 endclass
 
 `endif
-

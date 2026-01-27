@@ -15,12 +15,19 @@
 // Dependencies:
 // Notes:
 //////////////////////////////////////////////////////////////////////////////////
-
+ 
 `ifndef WISHBONE_SLAVE_SEQUENCER_SV
 `define WISHBONE_SLAVE_SEQUENCER_SV
-
-class wishbone_slave_sequencer extends uvm_sequencer #(uvm_sequence_item);
+ 
+class wishbone_slave_sequencer extends uvm_sequencer #(wishbone_seq_item);
   `uvm_component_utils(wishbone_slave_sequencer)
+  uvm_analysis_export #(wishbone_seq_item) request_export; 
+  uvm_tlm_analysis_fifo#(wishbone_seq_item)request_fifo;
+  
+  // Storage model
+ wishbone_storage wb_storage;
+ 
+  
 
   ////////////////////////////////////////////////////////////////////////
   // function name : new
@@ -29,9 +36,16 @@ class wishbone_slave_sequencer extends uvm_sequencer #(uvm_sequence_item);
   ////////////////////////////////////////////////////////////////////////
   function new(string name = "wishbone_slave_sequencer", uvm_component parent = null);
     super.new(name, parent);
+     request_fifo=new("request_fifo",this);
+    request_export = new("request_export",this);
+    wb_storage=new("wb_storage",this);
+  endfunction
+ 
+ function void connect_phase(uvm_phase phase);
+    super.connect_phase(phase);
+   `uvm_info("Inside connect","Wb_slave_sequencer connect_phase",UVM_LOW)
+     request_export.connect(request_fifo.analysis_export); 
   endfunction
 
 endclass
-
 `endif
-

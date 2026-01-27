@@ -19,18 +19,52 @@
 `ifndef RX_PHY_DRIVER_SV
 `define RX_PHY_DRIVER_SV
 
-class rx_phy_driver extends uvm_driver #(uvm_sequence_item);
+class rx_phy_driver extends uvm_driver #(phy_seq_item);
   `uvm_component_utils(rx_phy_driver)
-
+  phy_seq_item txn;
   virtual phy_rx_interface vif;
+  byte temp_byte;
+  
+  byte ethernet_pkt[$];
 
-  ////////////////////////////////////////////////////////////////////////
+  task ethernet_pkt_function(phy_seq_item txn);
+    $display("=====***********************======================================************===============================================");
+    ethernet_pkt.delete();
+    
+    if(txn.preamble_received)begin
+      for (int i = 0; i < 7; i++)
+        ethernet_pkt.push_back(8'h55);   // Preamble
+    end
+    if(txn.sfd_received)begin
+      ethernet_pkt.push_back(8'h57);     // SFD
+    end
+    foreach (txn.dest_addr[i])
+      ethernet_pkt.push_back(txn.dest_addr[i]); //DA
+    foreach (txn.src_addr[i])
+      ethernet_pkt.push_back(txn.src_addr[i]); //SA
+    ethernet_pkt.push_back(txn.length_type);
+    foreach (txn.payload[i])
+      ethernet_pkt.push_back(txn.payload[i]); //Payload
+    foreach (txn.crc[i])
+      ethernet_pkt.push_back(txn.crc[i]); //CRC
+    $display("================ETHERNET PACKET=============== %p ",ethernet_pkt);
+    $display("================ETHERNET PACKET DESCRIPTION IN HEX =============== \n");
+    foreach(ethernet_pkt[i])begin
+      $display("%0d	 :	%0h",i,ethernet_pkt[i]);
+    end
+  endtask
+  
+  
+  
+  
+  ///////////////////////////////////////////////////////////////////////
   // function name : new
   // argument : string name = "rx_phy_driver", uvm_component parent = null
   // description : Class constructor
   ////////////////////////////////////////////////////////////////////////
   function new(string name = "rx_phy_driver", uvm_component parent = null);
     super.new(name, parent);
+    txn = phy_seq_item::type_id::create("txn");
   endfunction
 
   ////////////////////////////////////////////////////////////////////////
@@ -49,11 +83,74 @@ class rx_phy_driver extends uvm_driver #(uvm_sequence_item);
   // argument : uvm_phase phase
   // description : Run phase for driving signals
   ////////////////////////////////////////////////////////////////////////
-  task run_phase(uvm_phase phase);
-    // Driver logic
+ virtual task run_phase(uvm_phase phase);
+    `uvm_info(get_type_name(), "RX PHY DRIVER run phase started", UVM_LOW)  
+     wait_for_reset_assert();
+    forever begin
+      @(vif.drv_cb iff(!vif.rst_n));
+ //     fork
+//         forever begin
+      $display("print 1");
+          seq_item_port.get_next_item(req);
+          drive_item(req);
+      $display("print 2");
+          `uvm_info(get_full_name(),$sformatf("seq item : %s",req.sprint()),UVM_HIGH)
+          seq_item_port.item_done();
+//         end
+//         wait_for_reset_assert();
+//       join_any
+//       disable fork;
+    end
+  endtask
+  //////////////////////////////////////////////////////////////////////
+  //function name : drive_item
+  //argument : 
+  //description : Logic for driving data
+  //////////////////////////////////////////////////////////////////////
+virtual task drive_item(phy_seq_item txn);
+    
+     vif.drv_cb.rx_dv <= 1;
+     vif.drv_cb.rx_er <= 0;
+     vif.drv_cb.col   <= 0;
+     vif.drv_cb.crs   <= 0; // IDLE
+     ethernet_pkt_function(txn);
+  $display("print 3");
+       for(int i=0; i< ethernet_pkt.size(); i++)begin
+         temp_byte <= ethernet_pkt[i]; 
+         vif.drv_cb.rxd <= temp_byte[3:0];
+         @(vif.drv_cb);   // wait 1 RX clock
+         vif.drv_cb.rxd <= temp_byte[7:4];
+        @(vif.drv_cb);   // wait 1 RX clock
+       end
+  $display("print 4");
+     @(vif.drv_cb);
+     vif.drv_cb.rx_dv <= 0;
+     vif.drv_cb.rx_er <= 0;
+     vif.drv_cb.col   <= 0;
+     vif.drv_cb.crs   <= 0; // IDLE
+     vif.drv_cb.rxd   <= 0;
+     `uvm_info(get_type_name(), "RX PHY DRIVER EXECUTED", UVM_NONE)
   endtask
 
+        
+   task wait_for_reset_assert();
+     @(posedge vif.rst_n);
+     vif.drv_cb.rxd<=0;
+     vif.drv_cb.rx_er<=0;
+     vif.drv_cb.rx_dv<=0;
+     vif.drv_cb.col<=0;
+     vif.drv_cb.crs<=0;
+     
+  endtask 
+    
 endclass
 
+    
 `endif
 
+
+
+
+  
+
+ 

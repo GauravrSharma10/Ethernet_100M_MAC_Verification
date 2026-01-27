@@ -65,4 +65,3 @@ class tx_phy_agent extends uvm_agent;
 endclass
 
 `endif
-

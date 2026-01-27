@@ -59,10 +59,10 @@ class wishbone_slave_agent extends uvm_agent;
     super.connect_phase(phase);
     if(get_is_active() == UVM_ACTIVE) begin
       driver.seq_item_port.connect(sequencer.seq_item_export);
+      monitor.request_aport.connect(sequencer.request_export);
     end
   endfunction
 
 endclass
 
 `endif
-

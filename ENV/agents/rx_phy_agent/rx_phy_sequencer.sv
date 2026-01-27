@@ -19,7 +19,7 @@
 `ifndef RX_PHY_SEQUENCER_SV
 `define RX_PHY_SEQUENCER_SV
 
-class rx_phy_sequencer extends uvm_sequencer #(uvm_sequence_item);
+class rx_phy_sequencer extends uvm_sequencer #(phy_seq_item);
   `uvm_component_utils(rx_phy_sequencer)
 
   ////////////////////////////////////////////////////////////////////////
@@ -34,4 +34,3 @@ class rx_phy_sequencer extends uvm_sequencer #(uvm_sequence_item);
 endclass
 
 `endif
-

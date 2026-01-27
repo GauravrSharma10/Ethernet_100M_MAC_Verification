@@ -24,11 +24,11 @@ interface wishbone_slave_interface(input logic clk, input logic rst_n);
   logic [31:0] dat_w;
   logic [31:0] dat_r;
   logic        we;
-  logic        sel;
+  logic [3:0]  sel;
   logic        stb;
   logic        cyc;
-  logic        ack;
-  logic        err;
+  logic        ack = 0;
+  logic        err = 0;
 
   clocking drv_cb @(posedge clk);
     default input #1 output #1;

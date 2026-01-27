@@ -19,7 +19,7 @@
 `ifndef WISHBONE_MASTER_SEQUENCER_SV
 `define WISHBONE_MASTER_SEQUENCER_SV
 
-class wishbone_master_sequencer extends uvm_sequencer #(uvm_sequence_item);
+class wishbone_master_sequencer extends uvm_sequencer #(wishbone_seq_item);
   `uvm_component_utils(wishbone_master_sequencer)
 
   ////////////////////////////////////////////////////////////////////////
@@ -34,4 +34,3 @@ class wishbone_master_sequencer extends uvm_sequencer #(uvm_sequence_item);
 endclass
 
 `endif
-
