@@ -25,6 +25,7 @@ interface phy_rx_interface(input logic clk, input logic rst_n);
   logic       rx_er;
   logic       col;
   logic       crs;
+
   clocking drv_cb @(posedge clk);
     default input #1 output #1;
     output rxd, rx_dv, rx_er,col,crs;

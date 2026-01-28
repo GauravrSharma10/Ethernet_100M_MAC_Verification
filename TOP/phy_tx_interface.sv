@@ -23,6 +23,8 @@ interface phy_tx_interface(input logic clk, input logic rst_n);
   logic [3:0] txd;
   logic       tx_en;
   logic       tx_er;
+	logic       col;
+	logic       crs;
 
   clocking drv_cb @(posedge clk);
     default input #1 output #1;
@@ -31,7 +33,7 @@ interface phy_tx_interface(input logic clk, input logic rst_n);
 
   clocking mon_cb @(posedge clk);
     default input #1 output #1;
-    input txd, tx_en, tx_er;
+    input txd, tx_en, tx_er,col,crs;
   endclocking
 
   modport driver (clocking drv_cb, input clk, rst_n);

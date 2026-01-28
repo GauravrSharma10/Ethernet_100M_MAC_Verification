@@ -86,6 +86,8 @@ module top;
     .mtxd_pad_o    (intf.phy_tx_if.txd),
     .mtxen_pad_o   (intf.phy_tx_if.tx_en),
     .mtxerr_pad_o  (intf.phy_tx_if.tx_er),
+    .mcoll_pad_i   (intf.phy_tx_if.col),
+    .mcrs_pad_i    (intf.phy_tx_if.crs),
 
     // --------------------------------------------------
     // PHY RX 
@@ -94,8 +96,6 @@ module top;
     .mrxd_pad_i    (intf.phy_rx_if.rxd),
     .mrxdv_pad_i   (intf.phy_rx_if.rx_dv),
     .mrxerr_pad_i  (intf.phy_rx_if.rx_er),
-    .mcoll_pad_i   (1'b0),
-    .mcrs_pad_i    (1'b0),
 
     // --------------------------------------------------
     // MIIM

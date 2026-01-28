@@ -114,6 +114,9 @@ package ethernet_mac_test_pkg;
   `include "eth_reg_block.sv"
 
 
+	`include "tx_phy_base_sequence.sv"
+
+
 
   `include "ethernet_mac_env.sv"
   `include "reg_seq.sv"
