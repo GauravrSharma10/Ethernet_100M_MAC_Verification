@@ -50,14 +50,21 @@ class wishbone_slave_driver extends uvm_driver #(wishbone_seq_item);
   // description : Run phase for driving signals
   ////////////////////////////////////////////////////////////////////////
  task run_phase(uvm_phase phase);
- `uvm_info(get_type_name(), "Slave driver started", UVM_LOW)
-
+    `uvm_info(get_type_name(), "Slave driver started", UVM_LOW)
+		wait_for_rst_assert();
     forever begin
-      seq_item_port.get_next_item(req);
-      `uvm_info(get_name(),$sformatf("sequence item : %s",req.sprint()),UVM_HIGH) 
-       drive_response(req);
-      seq_item_port.item_done();
-    end
+      @(s_vif.drv_cb iff(!rst_n));
+		  fork 
+        forever begin
+          seq_item_port.get_next_item(req);
+          `uvm_info(get_name(),$sformatf("sequence item : %s",req.sprint()),UVM_HIGH) 
+          drive_response(req);
+          seq_item_port.item_done();
+        end
+		    wait_for_rst_assert();
+			join_any
+		  disable fork;
+		end
   endtask
 
     task drive_response(wishbone_seq_item tr);
@@ -89,6 +96,12 @@ class wishbone_slave_driver extends uvm_driver #(wishbone_seq_item);
         end
       endcase
     `uvm_info("SLAVE DRIVER", "DRIVE RESPONSE TASK IS EXECUTED", UVM_LOW)
+  endtask
+
+	task wait_for_rst_assert();
+	  @(posedge vif.rst_n);
+    s_vif.drv_cb.dat_r <= 'd0;
+    s_vif.drv_cb.ack  <= 1'b0;
   endtask
 
 endclass
