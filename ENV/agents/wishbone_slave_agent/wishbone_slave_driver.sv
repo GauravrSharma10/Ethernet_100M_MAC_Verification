@@ -53,7 +53,7 @@ class wishbone_slave_driver extends uvm_driver #(wishbone_seq_item);
     `uvm_info(get_type_name(), "Slave driver started", UVM_LOW)
 		wait_for_rst_assert();
     forever begin
-      @(s_vif.drv_cb iff(!rst_n));
+      @(s_vif.drv_cb iff(!s_vif.rst_n));
 		  fork 
         forever begin
           seq_item_port.get_next_item(req);
@@ -99,7 +99,7 @@ class wishbone_slave_driver extends uvm_driver #(wishbone_seq_item);
   endtask
 
 	task wait_for_rst_assert();
-	  @(posedge vif.rst_n);
+	  @(posedge s_vif.rst_n);
     s_vif.drv_cb.dat_r <= 'd0;
     s_vif.drv_cb.ack  <= 1'b0;
   endtask

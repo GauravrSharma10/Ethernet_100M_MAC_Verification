@@ -214,6 +214,8 @@ task sample_jam();
     for (int i = 0; i < 6; i++)
         tr.src_addr.push_back(txd_q[idx++]);
 
+    tr.length_type[15:8] = txd_q[idx++];
+    tr.length_type[7:0] = txd_q[idx++];
 
     // ------------------------------------------------
     // Payload (exclude last 4 bytes = CRC)
