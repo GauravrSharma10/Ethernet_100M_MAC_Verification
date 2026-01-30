@@ -122,7 +122,7 @@ module top;
 	end
   
   initial begin
-    uvm_top.finish_on_completion = 0  ;
+ //   uvm_top.finish_on_completion = 0  ;
     // Pass interfaces to config_db
     uvm_config_db#(virtual wishbone_master_interface)::set(null, "*.wb_mst_agent_h.*", "m_vif", intf.wb_master_if);
     uvm_config_db#(virtual wishbone_slave_interface)::set(null, "*.wb_slv_agent_h.*", "s_vif", intf.wb_slave_if);
@@ -134,7 +134,7 @@ module top;
    run_test("reg_test");
 
     
-    #8000 $finish;
+   $finish;
   end
 
 endmodule

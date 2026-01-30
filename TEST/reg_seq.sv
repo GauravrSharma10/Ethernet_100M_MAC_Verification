@@ -24,18 +24,45 @@ class reg_seq extends uvm_sequence#(wishbone_seq_item);
 //     $display("read data : %0h",read_data);
 //     reg_model.tx_bd_num.write(status,32'h40);
 
-
+    reg_model.moder.write(status,'d2);
+    //reg_model.int_mask.write(status,'d1);
+  //  reg_model.int_source.write(status,'d1);
+  //  reg_model.int_mask.read(status,read_data);
+    //reg_model.moder.nopre.read(status,read_data);
     reg_model.tx_bd_num.read(status,read_data);
     $display("read data : %0h",read_data);
-    reg_model.tx_bd[0].write(status,64'hABCD_EDFD_00AA_8000);
+    reg_model.tx_bd[0].write(status,64'hABCD_EDFD_00AB_E000);
+    read_data = reg_model.tx_bd[0].get_mirrored_value();
+    //$display($time,"mirrored value : %0h",read_data);
+		#1000;
+    //reg_model.tx_bd[0].write(status,64'h0000_1234_00AB_C000);
+   // reg_model.int_mask.read(status,read_data);
+    //reg_model.tx_bd[2].write(status,64'hABCD_EDFD_00AB_C000);
+    //reg_model.tx_bd[3].write(status,64'hABCD_EDFD_00AB_C000);
+
+	//	#1600;
+
+ //   reg_model.int_source.read(status,read_data);
+  //  reg_model.int_source.write(status,'d1);
+
+	//	#1600;
+
+   // reg_model.int_source.read(status,read_data);
+   // reg_model.int_source.write(status,'d1);
+   // reg_model.int_source.read(status,read_data);
+	//	#1600;
+
+    //reg_model.int_source.read(status,read_data);
 //    reg_model.tx_bd[0].write(status,64'hABCD_EDFD_0064_C800);
     
 //     reg_model.tx_bd[0].write(status,32'hABCD_ABCD);
 //     reg_model.tx_bd[0].read(status,read_data);
 //     reg_model.tx_bd[1].read(status,read_data);
-    $display("read data : %0h",read_data);
+    $display($time,"read data : %0h",read_data);
     
-    reg_model.moder.write(status,32'h0042_A002);
+    //reg_model.moder.write(status,32'h0042_8002);
+    //reg_model.moder.write(status,32'h0042_8002);
+    //reg_model.moder.write(status,32'h0042_A002);
    // reg_model.moder.write(status,32'h0000_0002);
 
 //     reg_model.rx_bd[0].write(status,64'hABCD_EDFD_0064_C800);

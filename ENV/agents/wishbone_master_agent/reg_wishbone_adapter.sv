@@ -13,10 +13,10 @@ class reg_wishbone_adapter extends uvm_reg_adapter;
     wb_item.we   = (rw.kind == UVM_WRITE);
     
     if (rw.kind == UVM_WRITE) begin
-      wb_item.data = rw.data;
+      wb_item.data_q.push_back(rw.data);
     end
 
-     `uvm_info(get_type_name, $sformatf("reg2bus: addr = %0h, data = %0h,rd_or_wr = %0h", wb_item.addr, wb_item.data, wb_item.we), UVM_LOW);
+     `uvm_info(get_type_name, $sformatf("reg2bus: addr = %0h, data = %0h,rd_or_wr = %0h", wb_item.addr, wb_item.data_q[0], wb_item.we), UVM_LOW);
     return wb_item;
   endfunction
 
@@ -31,7 +31,7 @@ class reg_wishbone_adapter extends uvm_reg_adapter;
 
     rw.kind = (wb_item.we) ? UVM_WRITE : UVM_READ;
     rw.addr = wb_item.addr;
-    rw.data = wb_item.data;
+    rw.data = wb_item.data_q.pop_front();
     `uvm_info(get_type_name, $sformatf("bus2reg: addr = %0h, data = %0h, rd_or_wr = %0p", rw.addr, rw.data, rw.kind), UVM_LOW);
   endfunction
 

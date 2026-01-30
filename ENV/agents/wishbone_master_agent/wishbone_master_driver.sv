@@ -83,8 +83,8 @@ class wishbone_master_driver extends uvm_driver #(wishbone_seq_item);
     `dvif.sel <= 4'hF;
 
     if (item.we) begin
-      `dvif.dat_w <= item.data; // Driving write data
-      `uvm_info("WB_DRV", $sformatf("Writing ADDR=%h DATA=%h", item.addr, item.data), UVM_HIGH)
+      `dvif.dat_w <= item.data_q[0]; // Driving write data
+      `uvm_info("WB_DRV", $sformatf("Writing ADDR=%h DATA=%h", item.addr, item.data_q.pop_front()), UVM_HIGH)
     end else begin
       `dvif.dat_w <= 32'hz;    // Floating data bus for reads
     end
@@ -106,8 +106,8 @@ class wishbone_master_driver extends uvm_driver #(wishbone_seq_item);
     
     // If it's a READ, capture the data from the bus at the moment of ACK
     if (!item.we) begin
-      item.data = `dvif.dat_r;
-      `uvm_info("WB_DRV", $sformatf("Read ADDR=%h DATA=%h", item.addr, item.data), UVM_HIGH)
+      item.data_q.push_back(`dvif.dat_r);
+      `uvm_info("WB_DRV", $sformatf("Read ADDR=%h DATA=%h", item.addr, item.data_q[0]), UVM_HIGH)
     end
 
     // End the cycle (Return to Idle)

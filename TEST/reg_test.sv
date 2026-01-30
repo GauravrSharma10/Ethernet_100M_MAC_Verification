@@ -28,7 +28,8 @@ class reg_test extends ethernet_mac_base_test;
     rpseq.start(env_h.rx_phy_agent_h.sequencer);
     txseq.start(env_h.tx_phy_agent_h.sequencer);
         join_none
-    phase.phase_done.set_drain_time(this, 6000);
+		$display($time,"ok");
+    phase.phase_done.set_drain_time(this, 25000);
     phase.drop_objection(this);
 
   endtask
