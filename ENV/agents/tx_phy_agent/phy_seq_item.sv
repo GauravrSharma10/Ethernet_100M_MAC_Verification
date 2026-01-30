@@ -22,20 +22,20 @@
 class phy_seq_item extends uvm_sequence_item;
   rand bit preamble_received;
   rand bit sfd_received;
-  rand byte dest_addr [];
-  rand byte src_addr  [];
+  rand byte dest_addr [$];
+  rand byte src_addr  [$];
   rand bit[15:0] length_type;
   rand byte payload   [$];
-  rand byte crc       [];
+  rand byte crc       [$];
  
   `uvm_object_utils_begin(phy_seq_item)
   `uvm_field_int(preamble_received, UVM_ALL_ON)
   `uvm_field_int(sfd_received, UVM_ALL_ON)
-  `uvm_field_array_int(dest_addr, UVM_ALL_ON)
-  `uvm_field_array_int(src_addr, UVM_ALL_ON)
+  `uvm_field_queue_int(dest_addr, UVM_ALL_ON)
+  `uvm_field_queue_int(src_addr, UVM_ALL_ON)
   `uvm_field_int(length_type, UVM_ALL_ON)
   `uvm_field_queue_int(payload, UVM_ALL_ON)
-  `uvm_field_array_int(crc, UVM_ALL_ON) 
+  `uvm_field_queue_int(crc, UVM_ALL_ON) 
   `uvm_object_utils_end
 
 
@@ -55,7 +55,6 @@ class phy_seq_item extends uvm_sequence_item;
     crc.size()       == 4;
     length_type == payload.size();
   }
-
 
 endclass
 

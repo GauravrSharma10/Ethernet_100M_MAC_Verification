@@ -86,6 +86,7 @@ class ethernet_mac_env extends uvm_env;
        sys_cfg_h = system_config::type_id::create("sys_cfg_h");
     end
 
+    wb_slv_agent_h.reg_blk_h = this.reg_blk_h;
   endfunction
 
   ////////////////////////////////////////////////////////////////////////
@@ -109,10 +110,11 @@ class ethernet_mac_env extends uvm_env;
     
     // Connect other agents similarly....
     
-      reg_blk_h.wb_map.set_sequencer(.sequencer(wb_mst_agent_h.sequencer),.adapter(adptr_h));
+    reg_blk_h.wb_map.set_sequencer(.sequencer(wb_mst_agent_h.sequencer),.adapter(adptr_h));
     
     reg_blk_h.wb_map.set_base_addr('h0);
     reg_blk_h.wb_map.set_auto_predict(1);
+
   endfunction
 
 endclass

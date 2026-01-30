@@ -28,34 +28,26 @@ class rx_phy_driver extends uvm_driver #(phy_seq_item);
   byte ethernet_pkt[$];
 
   task ethernet_pkt_function(phy_seq_item txn);
-    $display("=====***********************======================================************===============================================");
     ethernet_pkt.delete();
     
     if(txn.preamble_received)begin
-      for (int i = 0; i < 7; i++)
+      for (int i = 0; i < 6; i++)
         ethernet_pkt.push_back(8'h55);   // Preamble
     end
     if(txn.sfd_received)begin
-      ethernet_pkt.push_back(8'h57);     // SFD
+      ethernet_pkt.push_back(8'hd5);     // SFD
     end
     foreach (txn.dest_addr[i])
-      ethernet_pkt.push_back(txn.dest_addr[i]); //DA
+      ethernet_pkt.push_back({<<{txn.dest_addr[i]}}); //DA
     foreach (txn.src_addr[i])
-      ethernet_pkt.push_back(txn.src_addr[i]); //SA
-    ethernet_pkt.push_back(txn.length_type);
+      ethernet_pkt.push_back({<<{txn.src_addr[i]}}); //SA
+    ethernet_pkt.push_back({<<{txn.length_type[7:0]}});
+    ethernet_pkt.push_back({<<{txn.length_type[15:8]}});
     foreach (txn.payload[i])
-      ethernet_pkt.push_back(txn.payload[i]); //Payload
+      ethernet_pkt.push_back({<<{txn.payload[i]}}); //Payload
     foreach (txn.crc[i])
-      ethernet_pkt.push_back(txn.crc[i]); //CRC
-    $display("================ETHERNET PACKET=============== %p ",ethernet_pkt);
-    $display("================ETHERNET PACKET DESCRIPTION IN HEX =============== \n");
-    foreach(ethernet_pkt[i])begin
-      $display("%0d	 :	%0h",i,ethernet_pkt[i]);
-    end
+      ethernet_pkt.push_back({<<{txn.crc[i]}}); //CRC
   endtask
-  
-  
-  
   
   ///////////////////////////////////////////////////////////////////////
   // function name : new
@@ -88,33 +80,31 @@ class rx_phy_driver extends uvm_driver #(phy_seq_item);
      wait_for_reset_assert();
     forever begin
       @(vif.drv_cb iff(!vif.rst_n));
- //     fork
-//         forever begin
-      $display("print 1");
+     fork
+        forever begin
           seq_item_port.get_next_item(req);
           drive_item(req);
-      $display("print 2");
           `uvm_info(get_full_name(),$sformatf("seq item : %s",req.sprint()),UVM_HIGH)
           seq_item_port.item_done();
-//         end
-//         wait_for_reset_assert();
-//       join_any
-//       disable fork;
+        end
+        wait_for_reset_assert();
+      join_any
+      disable fork;
     end
   endtask
+        
   //////////////////////////////////////////////////////////////////////
   //function name : drive_item
   //argument : 
   //description : Logic for driving data
   //////////////////////////////////////////////////////////////////////
-virtual task drive_item(phy_seq_item txn);
+  virtual task drive_item(phy_seq_item txn);
     
      vif.drv_cb.rx_dv <= 1;
      vif.drv_cb.rx_er <= 0;
      vif.drv_cb.col   <= 0;
      vif.drv_cb.crs   <= 0; // IDLE
      ethernet_pkt_function(txn);
-  $display("print 3");
        for(int i=0; i< ethernet_pkt.size(); i++)begin
          temp_byte <= ethernet_pkt[i]; 
          vif.drv_cb.rxd <= temp_byte[3:0];
@@ -122,7 +112,6 @@ virtual task drive_item(phy_seq_item txn);
          vif.drv_cb.rxd <= temp_byte[7:4];
         @(vif.drv_cb);   // wait 1 RX clock
        end
-  $display("print 4");
      @(vif.drv_cb);
      vif.drv_cb.rx_dv <= 0;
      vif.drv_cb.rx_er <= 0;
@@ -140,17 +129,8 @@ virtual task drive_item(phy_seq_item txn);
      vif.drv_cb.rx_dv<=0;
      vif.drv_cb.col<=0;
      vif.drv_cb.crs<=0;
-     
   endtask 
     
 endclass
-
-    
+   
 `endif
-
-
-
-
-  
-
- 

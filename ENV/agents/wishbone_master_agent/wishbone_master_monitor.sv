@@ -53,6 +53,43 @@ class wishbone_master_monitor extends uvm_monitor;
   ////////////////////////////////////////////////////////////////////////
   task run_phase(uvm_phase phase);
     // Monitor logic would go here
+		/*forever begin
+      @(`dsvif);
+      if (`dsvif.cyc && `dsvif.stb ) begin
+
+        req = wishbone_seq_item::type_id::create("req");
+        
+        req.we   = `dsvif.we;
+        req.addr = `dsvif.adr; 
+        
+        
+        if(`dsvif.we)begin    
+          req.data  = `dsvif.dat_w;
+      
+        end
+         
+        `uvm_info(get_name(),$sformatf("monitored transaction : %s",req.sprint()),UVM_NONE)
+        transaction_aport.write(req);
+        request_aport.write(req);
+        `uvm_info(get_type_name(), "After sending req to slave sequencer",UVM_HIGH)
+         fork
+           begin
+             do begin
+               @(`dsvif);
+             end while (!`dsvif.ack); // and because if one is false then condition is true
+						 @(`dsvif iff(`dsvif.ack));
+           end
+           begin
+             #100;
+             `uvm_error(get_full_name,"not recieving ack");
+           end
+         join_any
+         disable fork;
+      end
+			else
+        @(`dsvif);
+			  
+    end*/
   endtask
 
 endclass

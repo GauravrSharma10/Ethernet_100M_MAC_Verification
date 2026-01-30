@@ -1,3 +1,4 @@
+
 ///////////////////////////////////////////////////////////////////////////////////
 // Filename: tx_phy_monitor.sv
 //
@@ -19,12 +20,15 @@
 `ifndef TX_PHY_MONITOR_SV
 `define TX_PHY_MONITOR_SV
 
+`define mvif vif.mon_cb
+
 class tx_phy_monitor extends uvm_monitor;
   `uvm_component_utils(tx_phy_monitor)
 
   virtual phy_tx_interface vif;
   uvm_analysis_port #(uvm_sequence_item) ap;
   phy_seq_item tr;
+
   
   bit enable_preamble = 1;
 
@@ -55,98 +59,163 @@ class tx_phy_monitor extends uvm_monitor;
   // description : Run phase for monitoring signals
   ////////////////////////////////////////////////////////////////////////
   task run_phase(uvm_phase phase);
-    byte txd_q[$];   // temp storage to collect frame bytes
-    bit [7:0]assembled_byte ; // temp variable for byte alignment
-    bit in_frame,nibble_phase;
-    forever begin
-      @(posedge vif.clk);
 
-      // Detect start of frame
-      if (vif.tx_en && !in_frame) begin
-        in_frame   = 1;
-        txd_q.delete();
-      end
-
-     // Collect nibbles while tx_en is high
-      if (vif.tx_en && in_frame) begin
-        if (!nibble_phase) begin
-          // Lower nibble
-          assembled_byte[3:0] = {<<{vif.txd}};
-          nibble_phase = 1;
-        end
-        else begin
-          // Upper nibble 
-          assembled_byte[7:4] = {<<{vif.txd}};
-          txd_q.push_back(assembled_byte);
-          nibble_phase = 0;
-        end
-      end
-
-      // Detect end of frame
-      if (!vif.tx_en && in_frame) begin
-        in_frame = 0;
-        if(process_frame(txd_q))
-          $display("reception complete");
-        else
-          $display("frame droped");// process frame will segragate all the fields of packet structure 
-      end
-    end
+    //forever begin
+      //fork
+        sample();
+			//	end
+        //@(posedge `mvif.col);
+      //join_any
+      //disable
   endtask
+	 
+      task sample();
+			  bit jam_flag;
+        forever begin
+				  sample_preamble();
+          fork 
+            sample_data();
+						begin
+              wait(`mvif.col);
+							jam_flag = 1;
+						end
+          join_any
+          disable fork;
+					if(jam_flag)begin
+            sample_jam();
+						jam_flag= 0;
+				  end
+        end
+      endtask
+        
+      task sample_data();
+        byte txd_q[$];   // temp storage to collect frame bytes
+        bit [7:0]assembled_byte ; // temp variable for byte alignment
+        bit in_frame,nibble_phase;
+        while(`mvif.tx_en) begin
+          @(`mvif);
+
+          // Detect start of frame
+          if (`mvif.tx_en && !in_frame) begin
+            in_frame   = 1;
+            txd_q.delete();
+          end
+
+         // Collect nibbles while tx_en is high
+          if (`mvif.tx_en && in_frame) begin
+            if (!nibble_phase) begin
+              // Lower nibble
+              assembled_byte[3:0] = {<<{`mvif.txd}};
+							`uvm_info(get_name(),$sformatf("assembled lower nibble : %0h original nibble : %0h",assembled_byte[3:0],`mvif.txd),UVM_NONE)
+              nibble_phase = 1;
+            end
+            else begin
+              // Upper nibble 
+              assembled_byte[7:4] = {<<{`mvif.txd}};
+							`uvm_info(get_name(),$sformatf("assembled higher nibble : %0h original nibble : %0h",assembled_byte[7:4],`mvif.txd),UVM_NONE)
+							`uvm_info(get_name(),$sformatf("assembled byte : %0h",assembled_byte),UVM_NONE)
+              txd_q.push_back(assembled_byte);
+              nibble_phase = 0;
+            end
+          end
+
+          // Detect end of frame
+          if (!`mvif.tx_en && in_frame) begin
+            in_frame = 0;
+            if(process_frame(txd_q))
+              `uvm_info(get_name(),"reception complete",UVM_NONE)
+            else
+              `uvm_error(get_name,"frame dropped")
+          end
+        end
+      endtask
+            
+task sample_preamble();
+  int nibble_cnt = 0;
+  logic [3:0] nibble;
+
+    
+    @(posedge `mvif.tx_en);
+         if(4'h5 != `mvif.txd)
+				   `uvm_error(get_name(),$sformatf("incorrect preamble : %0h %0d ",`mvif.txd,nibble_cnt))
+			   else
+					 `uvm_info(get_name(),$sformatf("correct preamble : %0h %0d",`mvif.txd,nibble_cnt),UVM_NONE)
+				nibble_cnt++;
+
+    do begin
+      @(`mvif);
+      if(4'h5 != `mvif.txd)
+        `uvm_error(get_name(),$sformatf("incorrect preamble : %0h %0d",`mvif.txd,nibble_cnt))
+       else
+         `uvm_info(get_name(),$sformatf("correct preamble : %0h %0d",`mvif.txd,nibble_cnt),UVM_NONE)
+      nibble_cnt++;
+    end
+    while(nibble_cnt < 15);
+    
+    @(`mvif);
+    if(nibble_cnt == 15)begin
+      if(4'hd != `mvif.txd)
+        `uvm_error(get_name,$sformatf("incorrect sfd : %0h",`mvif.txd))
+       else
+         `uvm_info(get_name(),$sformatf("correct sfd : %0h",`mvif.txd),UVM_NONE)
+      nibble_cnt++;            
+    end
+    
+    @(`mvif);
+
+    if(nibble_cnt == 16)begin
+      if(4'h5 != `mvif.txd)
+        `uvm_error(get_name(),$sformatf("incorrect preamble : %0h %0d ",`mvif.txd,nibble_cnt))
+       else
+         `uvm_info(get_name(),$sformatf("correct preamble : %0h %0d",`mvif.txd,nibble_cnt),UVM_NONE)
+      nibble_cnt = 0;
+    end              
+endtask
+            
+task sample_jam();
+  int nibble_count = 0;
+
+		  do begin
+			@(`mvif);
+			if(4'h9 != `mvif.txd)
+				`uvm_error(get_name(),$sformatf("incorrect jam : %0h %0d",`mvif.txd,nibble_count))
+		  else
+				`uvm_info(get_name(),$sformatf("correct jam : %0h %0d",`mvif.txd,nibble_count),UVM_NONE)
+			nibble_count++;
+	  	end
+	  	while(nibble_count < 9);       
+			 
+	    if(`mvif.tx_en)
+			  `uvm_error(get_name(),"after the completion of jam sequence still tx_en is high")
+	endtask
+    
 
   function bit process_frame(byte txd_q[$]);
     int idx;
-
     tr = phy_seq_item::type_id::create("tr");
 
-    // Minimum check: preamble(8) + 64 bytes min packet size
-    if (txd_q.size() < 72) begin
+
+
+    // Minimum check:64 bytes min packet size
+    if (txd_q.size() < 64) begin
       `uvm_error(get_name(),"Frame too short, dropping")
       return 0;
     end// if(txd_q.size())
-
-
-    // Check 7-byte preamble
-    if(enable_preamble)begin
-      for (int i = 0; i < 7; i++) begin
-        if (txd_q[i] != 8'h55) begin
-//           $display("[MON] Invalid preamble at byte %0d: %02x", i, txd_q[i]);
-          foreach(txd_q[i])begin
-            $display("%0d    %0h",i,txd_q[i]);
-          end
-          `uvm_error(get_name(),$sformatf("Invalid preamble at byte %0d: %02x",i,txd_q[i]))
-//           return 0;
-        end//if(txd_q[i] != 55)
-      end// for loop
-      tr.preamble_received = 1;
-      
-    // Check SFD
-      if (txd_q[7] != 8'hd5) begin
-//       $display("[MON] Invalid SFD: %02x", txd_q[7]);
-//           $display("%p",txd_q);
-      foreach(txd_q[i])begin
-        $display("%0d    %0h",i,txd_q[i]);
-      end
-       `uvm_error(get_name(),$sformatf("Invalid SFD: %02x", txd_q[7]))
-      return 0;
-    end//if(txd_q[7] != 57)
-      
-     tr.sfd_received = 1;
-    end// if(enable_preamble)
-
-    idx = 8; // move past SFD
 
     // ------------------------------------------------
     // Destination Address (6 bytes)
     // ------------------------------------------------
     for (int i = 0; i < 6; i++)
-      tr.dest_addr[i] = txd_q[idx++];
+      tr.dest_addr.push_back(txd_q[idx++]);
 
     // ------------------------------------------------
     // Source Address (6 bytes)
     // ------------------------------------------------
     for (int i = 0; i < 6; i++)
-        tr.src_addr[i] = txd_q[idx++];
+        tr.src_addr.push_back(txd_q[idx++]);
 
+    tr.length_type[15:8] = txd_q[idx++];
+    tr.length_type[7:0] = txd_q[idx++];
 
     // ------------------------------------------------
     // Payload (exclude last 4 bytes = CRC)
@@ -158,11 +227,13 @@ class tx_phy_monitor extends uvm_monitor;
     // CRC / FCS (last 4 bytes of frame)
     // ------------------------------------------------
     for (int i = 0; i < 4; i++)
-      tr.crc[i] = txd_q[txd_q.size() - 4 + i];
+      tr.crc.push_back(txd_q[txd_q.size() - 4 + i]);
     
     // ------------------------------------------------
     // write
     // ------------------------------------------------
+    `uvm_info(get_name(),$sformatf("received frame :%s",tr.sprint()),UVM_NONE)
+    return 1;
 //       analysis_port.write(tr);
   endfunction
 
