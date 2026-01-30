@@ -19,6 +19,8 @@
 `ifndef WISHBONE_SLAVE_AGENT_SV
 `define WISHBONE_SLAVE_AGENT_SV
 
+ typedef eth_reg_block;
+
 class wishbone_slave_agent extends uvm_agent;
   `uvm_component_utils(wishbone_slave_agent)
 
@@ -26,6 +28,7 @@ class wishbone_slave_agent extends uvm_agent;
   wishbone_slave_monitor   monitor;
   wishbone_slave_sequencer sequencer;
   port_config               cfg;
+  eth_reg_block         reg_blk_h;
 
   ////////////////////////////////////////////////////////////////////////
   // function name : new
@@ -48,6 +51,7 @@ class wishbone_slave_agent extends uvm_agent;
       driver = wishbone_slave_driver::type_id::create("driver", this);
       sequencer = wishbone_slave_sequencer::type_id::create("sequencer", this);
     end
+		monitor.reg_blk_h = this.reg_blk_h;
   endfunction
 
   ////////////////////////////////////////////////////////////////////////
@@ -61,6 +65,7 @@ class wishbone_slave_agent extends uvm_agent;
       driver.seq_item_port.connect(sequencer.seq_item_export);
       monitor.request_aport.connect(sequencer.request_export);
     end
+
   endfunction
 
 endclass
