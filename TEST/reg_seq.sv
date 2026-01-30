@@ -31,7 +31,7 @@ class reg_seq extends uvm_sequence#(wishbone_seq_item);
     //reg_model.moder.nopre.read(status,read_data);
     reg_model.tx_bd_num.read(status,read_data);
     $display("read data : %0h",read_data);
-    reg_model.tx_bd[0].write(status,64'hABCD_EDFD_00AB_E000);
+    reg_model.tx_bd[0].write(status,64'hABCD_EDFD_00AA_8000);
     read_data = reg_model.tx_bd[0].get_mirrored_value();
     //$display($time,"mirrored value : %0h",read_data);
 		#1000;

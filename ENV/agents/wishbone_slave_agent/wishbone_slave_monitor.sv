@@ -33,6 +33,10 @@ class wishbone_slave_monitor extends uvm_monitor;
   uvm_reg_data_t read_data;
   
   wishbone_seq_item req;
+  wishbone_seq_item req_h;
+
+	local int length;
+	local bit first_addr;
   
    
   
@@ -68,9 +72,6 @@ class wishbone_slave_monitor extends uvm_monitor;
       @(`dsvif);
       read_data = reg_blk_h.tx_bd[0].get_mirrored_value();
       $display($time,"mirrored value monitor: %0h",read_data);
-			if(read_data[15] == 1'b1)begin
-			  $display($time,"started slave transaction");
-			end
 			end
 		join_none
 		fork 
@@ -101,7 +102,7 @@ class wishbone_slave_monitor extends uvm_monitor;
 						 @(`dsvif iff(`dsvif.ack));
             end
             begin
-              #100;
+              #1000;
               `uvm_error(get_full_name,"not recieving ack");
             end
           join_any
@@ -116,40 +117,54 @@ class wishbone_slave_monitor extends uvm_monitor;
 
 			forever begin
         @(`dsvif);
-        /*if(read_data[15] == 1'b1)begin
-				  if (`dsvif.cyc && `dsvif.stb ) begin
+        if(read_data[15] == 1'b1)begin
+				  
+					length = (read_data[31:16] + (read_data[31:16]%4));
 
-            req = wishbone_seq_item::type_id::create("req");
+          req_h = wishbone_seq_item::type_id::create("req_h");
+
+          first_addr = 1;
+
+				  while(length != 0)begin
+					  if (`dsvif.cyc && `dsvif.stb ) begin
+
+
+              if(first_addr)begin 
+                req_h.we   = `dsvif.we;
+                req_h.addr = `dsvif.adr;
+								first_addr = 0;
+						  end
         
-            req.we   = `dsvif.we;
-            req.addr = `dsvif.adr; 
         
-        
-            if(`dsvif.we)begin    
-              req.data_q  = `dsvif.dat_w;
-            end
+              if(`dsvif.we)begin    
+                req_h.data_q.push_back(`dsvif.dat_w);
+              end
          
-            `uvm_info(get_name(),$sformatf("monitored transaction : %s",req.sprint()),UVM_NONE)
-            transaction_aport.write(req);
-            request_aport.write(req);
-            `uvm_info(get_type_name(), "After sending req to slave sequencer",UVM_HIGH)
-            fork
-              begin
-              do begin
-                @(`dsvif);
-             end while (!`dsvif.ack); // and because if one is false then condition is true
-						  @(`dsvif iff(`dsvif.ack));
-              end
-              begin
-                #100;
-                `uvm_error(get_full_name,"not recieving ack");
-              end
-            join_any
-            disable fork;
-			 	    req.data_q = `dsvif.dat_r;
-            `uvm_info(get_name(),$sformatf("monitored transaction complete: %s",req.sprint()),UVM_NONE)
-        end*/
-			end
+            //`uvm_info(get_name(),$sformatf("monitored transaction inside while loop: %s",req_h.sprint()),UVM_NONE)
+            //transaction_aport.write(req_h);
+            //request_aport.write(req_h);
+            //`uvm_info(get_type_name(), "After sending req to slave sequencer",UVM_HIGH)
+              fork
+                begin
+						      @(`dsvif iff(`dsvif.ack));
+                end
+                begin
+                  #1000;
+                  `uvm_error(get_full_name,"not recieving ack");
+                end
+              join_any
+              disable fork;
+			 	      req_h.data_q.push_back(`dsvif.dat_r);
+
+						length = length-4;
+            `uvm_info(get_name(),$sformatf("monitored transaction inside while loop:%0d %s ",length,req_h.sprint()),UVM_NONE)
+           end//(cyc and stb )
+					 else 
+					   @(`dsvif);
+				end//(while)
+        `uvm_info(get_name(),$sformatf("monitored transaction complete after while loop: %s",req_h.sprint()),UVM_NONE)
+			end//if(read_data[15])
+		end//forever
 
 	  join
   endtask
