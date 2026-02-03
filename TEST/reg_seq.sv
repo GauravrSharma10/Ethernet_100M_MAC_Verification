@@ -24,6 +24,7 @@ class reg_seq extends uvm_sequence#(wishbone_seq_item);
 //     $display("read data : %0h",read_data);
 //     reg_model.tx_bd_num.write(status,32'h40);
 
+    reg_model.moder.write(status,32'h2);
 
     reg_model.tx_bd_num.read(status,read_data);
     $display("read data : %0h",read_data);
@@ -35,7 +36,7 @@ class reg_seq extends uvm_sequence#(wishbone_seq_item);
 //     reg_model.tx_bd[1].read(status,read_data);
     $display("read data : %0h",read_data);
     
-    reg_model.moder.write(status,32'h0042_A002);
+   // reg_model.moder.write(status,32'h0042_A002);
    // reg_model.moder.write(status,32'h0000_0002);
 
 //     reg_model.rx_bd[0].write(status,64'hABCD_EDFD_0064_C800);

@@ -20,12 +20,12 @@ class wishbone_seq_item extends uvm_sequence_item;
 
   // --- Physical Signals ---
   rand logic [31:0] addr;   // Address
-  rand logic [31:0] data;   // Data (Write data if we=1, Read data if we=0)
+  rand logic [31:0] data_q[$];   // Data (Write data_q if we=1, Read data_q if we=0)
   rand logic        we;     // Write Enable (1=Write, 0=Read)
 
   `uvm_object_utils_begin(wishbone_seq_item)
     `uvm_field_int(addr, UVM_ALL_ON)
-    `uvm_field_int(data, UVM_ALL_ON)
+    `uvm_field_queue_int(data_q, UVM_ALL_ON)
     `uvm_field_int(we,   UVM_ALL_ON)
   `uvm_object_utils_end
 

@@ -22,7 +22,7 @@ class wb_slave_sequence extends uvm_sequence #(wishbone_seq_item);
       // ------------------------------------------------------------
       p_sequencer.request_fifo.get(req);
 
-      `uvm_info(get_type_name(),$sformatf("Received request: addr=0x%08x we=%0d data=0x%08x",req.addr, req.we, req.data),UVM_MEDIUM)
+      `uvm_info(get_type_name(),$sformatf("Received request: addr=0x%08x we=%0d data=0x%08x",req.addr, req.we, req.data_q[0]),UVM_MEDIUM)
 
       // ------------------------------------------------------------
       // 2. Create response
@@ -36,15 +36,15 @@ class wb_slave_sequence extends uvm_sequence #(wishbone_seq_item);
       if (req.we) begin
         // ---------------- WRITE ----------------
 //         `uvm_do_with(req, { req.data == $urandom; })   // for 8-bit
-        p_sequencer.wb_storage.write_word(req.addr, req.data);
+        p_sequencer.wb_storage.write_word(req.addr, req.data_q[0]);
 
-        `uvm_info(get_type_name(),$sformatf("WRITE: addr=0x%08x data=0x%08x",req.addr, req.data),UVM_MEDIUM)
+        `uvm_info(get_type_name(),$sformatf("WRITE: addr=0x%08x data=0x%08x",req.addr, req.data_q.pop_front()),UVM_MEDIUM)
 
       end else begin
         // ---------------- READ -----------------
-        rsp.data = p_sequencer.wb_storage.read_word(req.addr);
+        rsp.data_q.push_back(p_sequencer.wb_storage.read_word(req.addr));
 
-        `uvm_info(get_type_name(),$sformatf("READ: addr=0x%08x data=0x%08x",req.addr, rsp.data),UVM_MEDIUM)
+        `uvm_info(get_type_name(),$sformatf("READ: addr=0x%08x data=0x%08x",req.addr, rsp.data_q[0]),UVM_MEDIUM)
       end
 
       // ------------------------------------------------------------

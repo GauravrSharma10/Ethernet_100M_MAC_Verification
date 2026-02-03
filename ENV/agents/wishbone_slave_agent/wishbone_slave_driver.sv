@@ -85,7 +85,7 @@ class wishbone_slave_driver extends uvm_driver #(wishbone_seq_item);
          0: begin
               //@(s_vif.drv_cb);
               if (s_vif.drv_cb.cyc && s_vif.drv_cb.stb && !s_vif.drv_cb.we) begin
-                s_vif.drv_cb.dat_r <= tr.data;
+                s_vif.drv_cb.dat_r <= tr.data_q.pop_front();
                 s_vif.drv_cb.ack   <= 1'b1;
                 @(s_vif.drv_cb);
                 s_vif.drv_cb.ack  <= 1'b0;
