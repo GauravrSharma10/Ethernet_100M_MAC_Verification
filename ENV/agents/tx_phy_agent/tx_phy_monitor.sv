@@ -26,7 +26,7 @@ class tx_phy_monitor extends uvm_monitor;
   `uvm_component_utils(tx_phy_monitor)
 
   virtual phy_tx_interface vif;
-  uvm_analysis_port #(uvm_sequence_item) ap;
+  uvm_analysis_port #(phy_seq_item) transaction_aport;
   phy_seq_item tr;
 
   
@@ -39,7 +39,7 @@ class tx_phy_monitor extends uvm_monitor;
   ////////////////////////////////////////////////////////////////////////
   function new(string name = "tx_phy_monitor", uvm_component parent = null);
     super.new(name, parent);
-    ap = new("ap", this);
+    transaction_aport = new("transaction_aport", this);
   endfunction
 
   ////////////////////////////////////////////////////////////////////////
@@ -233,8 +233,9 @@ task sample_jam();
     // write
     // ------------------------------------------------
     `uvm_info(get_name(),$sformatf("received frame :%s",tr.sprint()),UVM_NONE)
+
+    transaction_aport.write(tr);
     return 1;
-//       analysis_port.write(tr);
   endfunction
 
 endclass

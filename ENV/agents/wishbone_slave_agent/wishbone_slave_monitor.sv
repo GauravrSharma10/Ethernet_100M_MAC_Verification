@@ -71,7 +71,6 @@ class wishbone_slave_monitor extends uvm_monitor;
       forever begin
       @(`dsvif);
       read_data = reg_blk_h.tx_bd[0].get_mirrored_value();
-      $display($time,"mirrored value monitor: %0h",read_data);
 			end
 		join_none
 		fork 
@@ -91,7 +90,7 @@ class wishbone_slave_monitor extends uvm_monitor;
           end
          
           `uvm_info(get_name(),$sformatf("monitored transaction : %s",req.sprint()),UVM_NONE)
-          transaction_aport.write(req);
+
           request_aport.write(req);
           `uvm_info(get_type_name(), "After sending req to slave sequencer",UVM_HIGH)
           fork
@@ -119,13 +118,14 @@ class wishbone_slave_monitor extends uvm_monitor;
         @(`dsvif);
         if(read_data[15] == 1'b1)begin
 				  
-					length = (read_data[31:16] + (read_data[31:16]%4));
-
+					//length = (read_data[31:16] + (read_data[31:16]%4));
+          length = 4*((read_data[31:16] + 3)/4);
           req_h = wishbone_seq_item::type_id::create("req_h");
 
           first_addr = 1;
-
-				  while(length != 0)begin
+         
+				  $display("ok : %0d",length);
+				  while(length > 0)begin
 					  if (`dsvif.cyc && `dsvif.stb ) begin
 
 
@@ -163,6 +163,7 @@ class wishbone_slave_monitor extends uvm_monitor;
 					   @(`dsvif);
 				end//(while)
         `uvm_info(get_name(),$sformatf("monitored transaction complete after while loop: %s",req_h.sprint()),UVM_NONE)
+        transaction_aport.write(req_h);
 			end//if(read_data[15])
 		end//forever
 

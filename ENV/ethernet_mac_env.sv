@@ -87,6 +87,7 @@ class ethernet_mac_env extends uvm_env;
     end
 
     wb_slv_agent_h.reg_blk_h = this.reg_blk_h;
+		sb_h.reg_blk_h = this.reg_blk_h;
   endfunction
 
   ////////////////////////////////////////////////////////////////////////
@@ -105,8 +106,8 @@ class ethernet_mac_env extends uvm_env;
     v_seqr_h.miim_seqr_h   = miim_agent_h.sequencer;
 
     // Connect Analysis Ports (Example connections)
-//     wb_mst_agent_h.monitor.ap.connect(sb_h.item_imp);
-//     wb_mst_agent_h.monitor.ap.connect(cov_h.analysis_export);
+    wb_slv_agent_h.monitor.transaction_aport.connect(sb_h.wishbone_item_imp);
+    tx_phy_agent_h.monitor.transaction_aport.connect(sb_h.phy_item_imp);
     
     // Connect other agents similarly....
     
