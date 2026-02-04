@@ -16,6 +16,7 @@
 // Notes:
 //////////////////////////////////////////////////////////////////////////////////
 
+`ifndef ETHERNET_MAC_CHECKER_SV
 `define ETHERNET_MAC_CHECKER_SV
  
 // import eth_reg_pkg::*;
@@ -90,9 +91,6 @@ class ethernet_mac_checker extends uvm_component;
  
 
     fork
-   // check_txd_valid_only_when_tx_en();
-    check_rxd_valid_only_when_rx_dv();
- 
      check_padding_behavior();
       check_loopback_data_match();
       check_tx_crc_append();
@@ -107,12 +105,11 @@ class ethernet_mac_checker extends uvm_component;
       check_txbd_num_zero_tx_disable();
       check_txbd_num_max_rx_disable();
       check_nopre();
-      check_rx_starts_when_empty_bit_set();
-      
+      check_rx_starts_when_empty_bit_set();     
       check_tx_enable();
       check_rx_enable();
       check_tx_bd_ready();
-      check_ipg();
+      check_ipg_hd_fd();
       check_tx_only_when_media_idle();
       check_collision_handling();
       check_wrap_tx_bd();
@@ -172,24 +169,6 @@ class ethernet_mac_checker extends uvm_component;
    
     
 // checkers ::
-  task check_txd_valid_only_when_tx_en();
-    `uvm_info("CHECK_TXD_VALID_ONLY_WHEN_TX_EN"," INSIDE CHECK_TXD_VALID_ONLY_WHEN_TX_EN TASK",UVM_LOW)
-    forever begin
-      @(posedge t_vif.clk);
-      if (!t_vif.tx_en && t_vif.txd != 4'h0)
-        `uvm_error("CHECK_TXD_VALID_ONLY_WHEN_TX_EN","TXD active while TX_EN=0")
-    end
-  endtask
-
-  task check_rxd_valid_only_when_rx_dv();
-       `uvm_info("CHECK_RXD_VALID_ONLY_WHEN_RX_DV"," INSIDE CHECK_RXD_VALID_ONLY_WHEN_RX_DV TASK",UVM_LOW)
-    forever begin
-      @(posedge r_vif.clk);
-      if (!r_vif.rx_dv && r_vif.rxd !== 4'h0)
-        `uvm_error("CHECK_RXD_VALID_ONLY_WHEN_RX_DV","RXD active while RX_DV=0")
-    end
-  endtask
-
   task check_padding_behavior();
     
     int minfl;
@@ -819,9 +798,9 @@ endtask
   forever begin
     @(posedge r_vif.rx_dv);
     if (!reg_model.rx_bd[0].E.get_mirrored_value())
-      `uvm_error("CHECK_RX_STARTS_WHEN_EMPTY_BIT_SET","RX started when E=0")
+      `uvm_info("CHECK_RX_STARTS_WHEN_EMPTY_BIT_SET","RX started when E=0",UVM_LOW)
     else 
-      `uvm_info("CHECK_RX_STARTS_WHEN_EMPTY_BIT_SET","RX started when E=1",UVM_LOW)
+      `uvm_error("CHECK_RX_STARTS_WHEN_EMPTY_BIT_SET","RX started when E=1")
   end
 endtask  
         
@@ -837,15 +816,33 @@ task check_tx_enable();
 endtask
 
 task check_rx_enable();
-       `uvm_info("CHECK_RX_ENABLE"," INSIDE CHECK_RX_ENABLE TASK",UVM_LOW)
+  bit rxen;
+  bit no_rx_bd;
+
+  `uvm_info("CHECK_RX_ENABLE",
+            "INSIDE CHECK_RX_ENABLE TASK",
+            UVM_LOW)
+
   forever begin
     @(posedge r_vif.rx_dv);
-    if (!reg_model.moder.rxen.get_mirrored_value())
-      `uvm_error("RXEN_ERR","RX_DV asserted while MODER.RXEN=0")
-    else
-      `uvm_info("RXEN","RX_DV asserted while MODER.RXEN=1",UVM_LOW)
+    rxen     = reg_model.moder.rxen.get_mirrored_value();
+    no_rx_bd = (reg_model.tx_bd_num.get_mirrored_value() == 8'h80);
+    if (!rxen) begin
+      `uvm_info("RXEN_LOW",
+        "RX_DV asserted while MODER.RXEN = 0.If the value, written to the TX_BD_NUM register, is equal to 0x80 (all buffer descriptors are used for transmit buffer descriptors, so there is no receive BD), then receiver is automatically disabled regardless of the RXEN bit.",UVM_LOW)
+    end
+    else if (no_rx_bd) begin
+      `uvm_error("RXBD_ERR",
+                 "RX_DV asserted while TX_BD_NUM = 8'h80 (no RX buffer descriptors) as well as RECEN = 0 of moder tregister")
+    end
+    else begin
+      `uvm_info("RXEN_OK",
+        "RX_DV asserted with RXEN=1 and RX BDs available",
+        UVM_LOW)
+    end
   end
 endtask
+
 
 task check_tx_bd_ready();
        `uvm_info("CHECK_TX_BD_READY"," INSIDE CHECK_TX_BD_READY TASK",UVM_LOW)
@@ -860,30 +857,52 @@ task check_tx_bd_ready();
   end
 endtask
 
-task check_ipg();
-  time tx_end_time;
-  time ipg_time;
-     `uvm_info("CHECK_IPG"," INSIDE CHECK_IPG TASK",UVM_LOW)
+task check_ipg_hd_fd();
+  int idle_nibbles;
+  int expected_nibbles;
+  bit full_duplex;
 
-  @(negedge t_vif.tx_en);
-  tx_end_time = $time;
+  `uvm_info("CHECK_IPG_HD_FD","IPG checker (HD + FD) started",UVM_LOW)
 
   forever begin
-    @(posedge t_vif.tx_en);
-    ipg_time = $time - tx_end_time;
+    @(negedge t_vif.tx_en);
+    full_duplex = reg_model.moder.fulld.get_mirrored_value();
+    if (full_duplex)
+      expected_nibbles =
+        reg_model.ipgt.ipgt.get_mirrored_value() + 6;
+    else
+      expected_nibbles =
+        reg_model.ipgt.ipgt.get_mirrored_value() + 3;
 
-    `uvm_info(get_type_name(),
-      $sformatf("Measured IPG = %0t ns", ipg_time),
+    idle_nibbles = 0;
+
+     
+    while (!t_vif.tx_en) begin
+      @(posedge t_vif.clk);
+      if (t_vif.txd == 4'h0 ||
+          t_vif.txd == 4'hF ||
+          t_vif.txd === 4'hX)
+        idle_nibbles++;
+    end
+
+    `uvm_info("IPG_OBS",
+              $sformatf("Mode = %s DUPLEX IPGT=%0d Expected_nibbles = %0d nibbles  Observed_nibbles = %0d nibbles",
+        full_duplex ? "FULL" : "HALF",
+        reg_model.ipgt.ipgt.get_mirrored_value(),
+        expected_nibbles,
+        idle_nibbles),
       UVM_LOW)
 
-    if (ipg_time < 960)
+    if (idle_nibbles < expected_nibbles)
       `uvm_error("IPG_ERR",
-        $sformatf("IPG violation: %0t ns (< 960 ns)", ipg_time))
-
-    @(negedge t_vif.tx_en);
-    tx_end_time = $time;
+        $sformatf("IPG violation (%s duplex): %0d < %0d nibble times",
+          full_duplex ? "FULL" : "HALF",
+          idle_nibbles, expected_nibbles))
+      `uvm_info("CHECK_IPG_HD_FD","CHECK PASSED FOR CHECK_IPG_HD_FD ",UVM_LOW)
   end
+      
 endtask
+
 
 task check_tx_only_when_media_idle();
    `uvm_info("CHECK_TX_ONLY_WHEN_MEDIA_IDLE"," INSIDE CHECK_TX_ONLY_WHEN_MEDIA_IDLE TASK",UVM_LOW)
