@@ -14,7 +14,7 @@ package eth_reg_pkg;
   `include "eth_tx_bd_num_reg.sv"
   `include "eth_mac_addr0_reg.sv"
   `include "eth_mac_addr1_reg.sv"
-  `include "eth_ctrlmoder_reg.sv"
+
   // Block
   `include "eth_reg_block.sv"
 endpackage

@@ -40,7 +40,7 @@ class tx_phy_driver extends uvm_driver #(uvm_sequence_item);
   ////////////////////////////////////////////////////////////////////////
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(virtual phy_tx_interface)::get(this, "", "t_vif", vif))
+    if(!uvm_config_db#(virtual phy_tx_interface)::get(this, "", "vif", vif))
       `uvm_fatal("NOVIF", "Virtual interface not set for tx_phy_driver")
   endfunction
 
@@ -56,4 +56,3 @@ class tx_phy_driver extends uvm_driver #(uvm_sequence_item);
 endclass
 
 `endif
-

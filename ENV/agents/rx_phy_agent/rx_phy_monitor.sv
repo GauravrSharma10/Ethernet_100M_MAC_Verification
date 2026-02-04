@@ -44,7 +44,7 @@ class rx_phy_monitor extends uvm_monitor;
   ////////////////////////////////////////////////////////////////////////
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(virtual phy_rx_interface)::get(this, "", "r_vif", vif))
+    if(!uvm_config_db#(virtual phy_rx_interface)::get(this, "", "vif", vif))
       `uvm_fatal("NOVIF", "Virtual interface not set for rx_phy_monitor")
   endfunction
 
@@ -59,4 +59,3 @@ class rx_phy_monitor extends uvm_monitor;
 endclass
 
 `endif
-
