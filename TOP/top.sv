@@ -110,24 +110,27 @@ module top;
     // --------------------------------------------------
     .int_o ()
   );
+  
+  mii_assert_module  assert_m(.clk(clk),.rst(rst),.m_wb_dat_w(intf.wb_master_if.dat_w),.m_wb_dat_r(intf.wb_master_if.dat_r),.m_wb_adr(intf.wb_master_if.adr),.m_wb_sel(intf.wb_master_if.sel),.m_wb_we(intf.wb_master_if.we),.m_wb_cyc(intf.wb_master_if.cyc),.m_wb_stb(intf.wb_master_if.stb),.m_wb_ack(intf.wb_master_if.ack),.m_wb_err(intf.wb_master_if.err),.s_wb_dat_w(intf.wb_slave_if.dat_w),.s_wb_dat_r(intf.wb_slave_if.dat_r),.s_wb_adr(intf.wb_slave_if.adr),.s_wb_sel(intf.wb_slave_if.sel),.s_wb_we(intf.wb_slave_if.we),.s_wb_cyc(intf.wb_slave_if.we),.s_wb_stb(intf.wb_slave_if.stb),.s_wb_ack(intf.wb_slave_if.ack),.s_wb_err(intf.wb_slave_if.err),.tx_en(intf.phy_tx_if.tx_en),.tx_d(intf.phy_tx_if.txd),.tx_er(intf.phy_tx_if.tx_er),.rx_d(intf.phy_rx_if.rxd),.rx_dv(intf.phy_rx_if.rx_dv),.rx_er(intf.phy_rx_if.rx_er),.col(intf.phy_rx_if.col),.crs(intf.phy_rx_if.crs));
+
 
   initial begin
     $dumpfile(".vcd");
     $dumpvars();
   end
 
-  initial begin
-    $fsdbDumpfile("test_top");
-    $fsdbDumpvars;
-	end
+//   initial begin
+//     $fsdbDumpfile("test_top");
+//     $fsdbDumpvars;
+// 	end
   
   initial begin
  //   uvm_top.finish_on_completion = 0  ;
     // Pass interfaces to config_db
-    uvm_config_db#(virtual wishbone_master_interface)::set(null, "*.wb_mst_agent_h.*", "m_vif", intf.wb_master_if);
-    uvm_config_db#(virtual wishbone_slave_interface)::set(null, "*.wb_slv_agent_h.*", "s_vif", intf.wb_slave_if);
-    uvm_config_db#(virtual phy_tx_interface)::set(null, "*.tx_phy_agent_h.*", "vif", intf.phy_tx_if);
-    uvm_config_db#(virtual phy_rx_interface)::set(null, "*.rx_phy_agent_h.*", "vif", intf.phy_rx_if);
+    uvm_config_db#(virtual wishbone_master_interface)::set(null, "*", "m_vif", intf.wb_master_if);
+    uvm_config_db#(virtual wishbone_slave_interface)::set(null, "*", "s_vif", intf.wb_slave_if);
+    uvm_config_db#(virtual phy_tx_interface)::set(null, "*", "t_vif", intf.phy_tx_if);
+    uvm_config_db#(virtual phy_rx_interface)::set(null, "*", "r_vif", intf.phy_rx_if);
     uvm_config_db#(virtual miim_interface)::set(null, "*.miim_agent_h.*", "vif", intf.miim_if);
 
    //  run_test("ethernet_mac_base_test");

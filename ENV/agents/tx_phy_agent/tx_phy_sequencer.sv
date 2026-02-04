@@ -36,10 +36,11 @@ class tx_phy_sequencer extends uvm_sequencer #(uvm_sequence_item);
 	function void build_phase(uvm_phase phase);
 	  super.build_phase(phase);
 
-    if(!uvm_config_db#(virtual phy_tx_interface)::get(this, "", "vif", vif))
+		if(!uvm_config_db#(virtual phy_tx_interface)::get(this, "", "t_vif", vif))
       `uvm_fatal(get_name(), "Virtual interface not set for tx_phy_monitor")	
   endfunction
 
   endclass
 
 `endif
+

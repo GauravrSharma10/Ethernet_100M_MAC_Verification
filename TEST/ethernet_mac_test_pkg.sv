@@ -26,7 +26,7 @@
 `include "phy_tx_interface.sv"
 `include "phy_rx_interface.sv"
 `include "miim_interface.sv"
-
+`include "assertions.sv"
 package ethernet_mac_test_pkg;
   `include "uvm_macros.svh"
   import uvm_pkg::*;
@@ -110,6 +110,7 @@ package ethernet_mac_test_pkg;
 	`include "eth_tx_bd_reg.sv"
 	`include "eth_tx_bd_num_reg.sv"
 	`include "eth_txctrl_reg.sv"
+    `include "eth_ctrlmoder_reg.sv"
   // Block
   `include "eth_reg_block.sv"
 
@@ -127,4 +128,3 @@ package ethernet_mac_test_pkg;
 endpackage
 
 `endif
-

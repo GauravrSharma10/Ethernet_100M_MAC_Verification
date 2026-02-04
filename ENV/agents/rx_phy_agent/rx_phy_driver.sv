@@ -66,7 +66,7 @@ class rx_phy_driver extends uvm_driver #(phy_seq_item);
   ////////////////////////////////////////////////////////////////////////
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(virtual phy_rx_interface)::get(this, "", "vif", vif))
+    if(!uvm_config_db#(virtual phy_rx_interface)::get(this, "", "r_vif", vif))
       `uvm_fatal("NOVIF", "Virtual interface not set for rx_phy_driver")
   endfunction
 
